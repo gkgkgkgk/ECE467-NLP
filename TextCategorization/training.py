@@ -2,8 +2,6 @@ import os
 import nltk
 from nltk.tokenize import word_tokenize
 
-nltk.download('punkt')
-
 class TrainedCorpus:
     def __init__(self, path, outputFile=''):
         self.labelCount = {}
