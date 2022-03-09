@@ -1,1 +1,4 @@
 /TextCategorization/corpora
+/TextCategorization/TC_provided
+__pycache__/
+*.py[cod]
