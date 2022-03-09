@@ -45,7 +45,7 @@ def verify(guesses, path):
     with open(path) as testFiles:
             for testFile in testFiles:
                 label = testFile.split()[1]
-                filename = os.path.basename(testFile.split()[0])
+                filename = (testFile.split()[0])
                 if label == guesses[filename]:
                     right += 1
 

@@ -38,7 +38,7 @@ if corpus == 1:
 elif corpus == 2:
     test = tester(t, testFile, 0.0275, True)
 elif corpus == 3:
-    test = tester(t, testFile, 0.0924, False)
+    test = tester(t, testFile, 0.0648, False)
 
 print("Successfully tested on corpus " + str(corpus) + ".")
 
