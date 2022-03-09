@@ -7,7 +7,6 @@ import os
 from nltk.corpus import stopwords
 
 nltk.download('stopwords', quiet=True)
-stopwords = set(stopwords.words('english'))
 
 def tester(t, path, a, useStopWords=True):
     guesses = {}
@@ -25,7 +24,7 @@ def tester(t, path, a, useStopWords=True):
                     k = len(t.wordCount)
 
                     for word in tokenization:
-                        if word.isalpha() and (useStopWords or word not in stopwords):
+                        if word.isalpha() and (useStopWords or word not in stopwords.words('english')):
                             count = 0
 
                             if word in t.wordCount[label]:
