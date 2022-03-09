@@ -11,12 +11,13 @@ stopwords = set(stopwords.words('english'))
 
 def tester(t, path, a, useStopWords=True):
     guesses = {}
-
+    
     with open(path) as testFiles:    
         for testFile in testFiles:
             labelProbs = {}
+            fileName = testFile.split()[0]
 
-            with open(os.path.dirname(path)+ testFile[1:].split()[0].strip()) as testFile:
+            with open(os.path.dirname(path) + testFile[1:].split()[0].strip()) as testFile:
                 tokenization = nltk.word_tokenize(testFile.read())
 
                 for label in t.wordCount:
@@ -33,7 +34,7 @@ def tester(t, path, a, useStopWords=True):
 
                             labelProbs[label] += math.log((count + a)/(labelCount + (a*k)))
                             
-            guesses[testFile.name] = max(labelProbs, key=labelProbs.get)
+            guesses[fileName] = max(labelProbs, key=labelProbs.get)
 
 
     return guesses

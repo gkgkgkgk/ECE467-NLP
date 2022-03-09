@@ -17,13 +17,13 @@ class TrainedCorpus:
         wordCount = {}
         articles = {}
         fileCount = 0
+        articlePaths = {}
 
         d = os.path.dirname(labelsFile)
 
         with open(labelsFile, 'r') as labelsFile:
             for line in labelsFile:
                 article, label = line.split()
-                articleName = d + article[1:]
 
                 if label not in labelCount:
                     labelCount[label] = 1
@@ -31,13 +31,14 @@ class TrainedCorpus:
                 else:
                     labelCount[label] += 1
                 
-                articles[articleName] = label
+                articles[article] = label
+                articlePaths[article] = d + article[1:]
                 fileCount +=1
         
         for article in articles:
             label = articles[article]
 
-            with open(article, 'r') as articleFile:
+            with open(articlePaths[article], 'r') as articleFile:
                 tokenization = set(nltk.word_tokenize(articleFile.read()))
 
                 for word in tokenization:
@@ -46,6 +47,7 @@ class TrainedCorpus:
                             wordCount[label][word] = 1
                         else:
                             wordCount[label][word] += 1
+
 
         self.labelCount = labelCount
         self.wordCount = wordCount
