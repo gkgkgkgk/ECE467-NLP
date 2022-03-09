@@ -79,4 +79,4 @@ def customtest(percentage, amount, factorRange, corpus, useStopWords):
     return (results)
 
 # print(customtest(0.85, 25, [0.005, 0.12], 3, True))
-print(customTestCorpus1(25, [0.005, 0.12], False))
+print(customTestCorpus1(25, [0.005, 0.12], True))

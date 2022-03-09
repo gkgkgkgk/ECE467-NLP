@@ -34,7 +34,7 @@ test = []
 print("Testing...")
 
 if corpus == 1:
-    test = tester(t, testFile, 0.095, False)
+    test = tester(t, testFile, 0.097, False)
 elif corpus == 2:
     test = tester(t, testFile, 0.0275, True)
 elif corpus == 3:
