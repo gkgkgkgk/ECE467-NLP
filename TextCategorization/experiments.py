@@ -79,4 +79,7 @@ def customtest(percentage, amount, factorRange, corpus, useStopWords):
     return (results)
 
 # print(customtest(0.85, 25, [0.005, 0.12], 3, True))
-print(customTestCorpus1(25, [0.005, 0.12], True))
+# print(customTestCorpus1(25, [0.005, 0.12], True))
+
+t = TrainedCorpus("./corpora/corpus1_train.labels")
+print(verify(tester(t, "./corpora/corpus1_test.list", 0.097, True), "./corpora/corpus1_test.labels"))

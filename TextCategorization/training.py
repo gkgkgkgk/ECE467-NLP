@@ -2,6 +2,8 @@ import os
 import nltk
 from nltk.tokenize import word_tokenize
 
+nltk.download('averaged_perceptron_tagger')
+
 class TrainedCorpus:
     def __init__(self, path, outputFile=''):
         self.labelCount = {}
@@ -40,14 +42,14 @@ class TrainedCorpus:
 
             with open(articlePaths[article], 'r') as articleFile:
                 tokenization = set(nltk.word_tokenize(articleFile.read()))
+                pos = (nltk.pos_tag(tokenization))
 
-                for word in tokenization:
-                    if word.isalpha():
-                        if word not in wordCount[label]:
-                            wordCount[label][word] = 1
+                for word in pos:
+                    if word[0].isalpha():
+                        if word[0]+"|"+word[1] not in wordCount[label]:
+                            wordCount[label][word[0]+"|"+word[1]] = 1
                         else:
-                            wordCount[label][word] += 1
-
+                            wordCount[label][word[0]+"|"+word[1]] += 1
 
         self.labelCount = labelCount
         self.wordCount = wordCount
