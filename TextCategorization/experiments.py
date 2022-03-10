@@ -1,7 +1,6 @@
 from training import TrainedCorpus
 from testing import *
 import nltk
-from nltk.tokenize import word_tokenize
 import random
 import statistics
 

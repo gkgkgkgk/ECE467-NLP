@@ -1,6 +1,9 @@
 from training import TrainedCorpus
 from testing import *
 import nltk
+from nltk.tokenize import word_tokenize
+import random
+import statistics
 
 nltk.download('punkt', quiet=True)
 
@@ -33,7 +36,7 @@ print("Testing...")
 if corpus == 1:
     test = tester(t, testFile, 0.097, False)
 elif corpus == 2:
-    test = tester(t, testFile, 0.0275)
+    test = tester(t, testFile, 0.0275, True)
 elif corpus == 3:
     test = tester(t, testFile, 0.1108, False)
 
