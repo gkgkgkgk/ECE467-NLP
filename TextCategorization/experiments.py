@@ -7,9 +7,9 @@ import statistics
 
 nltk.download('punkt', quiet=True)
 
-def customTestCorpus1(amount, factorRange, useStopWords):
+def customTestCorpus1(amount, factorRange, useStopWords, usePOS):
     results = []
-    t = TrainedCorpus("./corpora/corpus1_train.labels")
+    t = TrainedCorpus("./corpora/corpus1_train.labels", usePOS)
 
     r = factorRange[1] - factorRange[0]
     step = round(r / amount, 5)
@@ -18,14 +18,15 @@ def customTestCorpus1(amount, factorRange, useStopWords):
         factors.append(factorRange[0] + (i * step))
 
     for i in range(amount):
+        print(i)
         a = factors[i]
-        successRate = verify(tester(t, "./corpora/corpus1_test.list", a, useStopWords), "./corpora/corpus1_test.labels")
+        successRate = verify(tester(t, "./corpora/corpus1_test.list", a, usePOS, useStopWords), "./corpora/corpus1_test.labels")
         results.append({'percentage': successRate, 'a': a})
 
     # return a with max success rate
     return (results)
 
-def customtest(percentage, amount, factorRange, corpus, useStopWords):
+def customtest(percentage, amount, factorRange, corpus, useStopWords, usePOS):
     results = []
 
     # evenly divide range into amount of tests
@@ -39,7 +40,7 @@ def customtest(percentage, amount, factorRange, corpus, useStopWords):
         a = factors[i]
         resultsa = []
 
-        for j in range(5):
+        for j in range(25):
             print("Starting test " + str(j) + " for a = " + str(factors[i]))
             train = []
             test = []   
@@ -66,8 +67,8 @@ def customtest(percentage, amount, factorRange, corpus, useStopWords):
                 out.write(line)
             out.close()
             print("Training")
-            t = TrainedCorpus("./corpora/train.txt")
-            successRate = verify(tester(t, "./corpora/test.txt", a, useStopWords), "./corpora/actual.txt")
+            t = TrainedCorpus("./corpora/train.txt", usePOS)
+            successRate = verify(tester(t, "./corpora/test.txt", a, usePOS, useStopWords), "./corpora/actual.txt")
             print("Testing")
             resultsa.append(successRate)
             os.remove("./corpora/train.txt")
@@ -78,8 +79,8 @@ def customtest(percentage, amount, factorRange, corpus, useStopWords):
 
     return (results)
 
-# print(customtest(0.85, 25, [0.005, 0.12], 3, True))
-# print(customTestCorpus1(25, [0.005, 0.12], True))
+print(customtest(0.85, 1, [0.0372, 0.12], 3, False, True))
+# print(customTestCorpus1(25, [0.005, 0.12], True, True))
 
-t = TrainedCorpus("./corpora/corpus1_train.labels")
-print(verify(tester(t, "./corpora/corpus1_test.list", 0.097, True), "./corpora/corpus1_test.labels"))
+# t = TrainedCorpus("./corpora/corpus1_train.labels")
+# print(verify(tester(t, "./corpora/corpus1_test.list", 0.097, True), "./corpora/corpus1_test.labels"))

@@ -5,16 +5,17 @@ from nltk.tokenize import word_tokenize
 nltk.download('averaged_perceptron_tagger')
 
 class TrainedCorpus:
-    def __init__(self, path, outputFile=''):
+    def __init__(self, path, usePOS=False, outputFile=''):
         self.labelCount = {}
         self.wordCount = {}
         self.articles = {}
         self.fileCount = 0
         self.path = path
         self.outputFile = outputFile
-        self.train(self.path, self.outputFile)
+        self.usePOS = usePOS
+        self.train(self.path,  self.usePOS, self.outputFile)
 
-    def train(self, labelsFile, outputFile=''):
+    def train(self, labelsFile, usePOS, outputFile=''):
         labelCount = {}
         wordCount = {}
         articles = {}
@@ -42,14 +43,23 @@ class TrainedCorpus:
 
             with open(articlePaths[article], 'r') as articleFile:
                 tokenization = set(nltk.word_tokenize(articleFile.read()))
-                pos = (nltk.pos_tag(tokenization))
+                
+                if usePOS:
+                    tokenization = (nltk.pos_tag(tokenization))
 
-                for word in pos:
-                    if word[0].isalpha():
-                        if word[0]+"|"+word[1] not in wordCount[label]:
-                            wordCount[label][word[0]+"|"+word[1]] = 1
-                        else:
-                            wordCount[label][word[0]+"|"+word[1]] += 1
+                for word in tokenization:
+                    if usePOS:
+                        if word[0].isalpha():
+                            if word[0]+"|"+word[1] not in wordCount[label]:
+                                wordCount[label][word[0]+"|"+word[1]] = 1
+                            else:
+                                wordCount[label][word[0]+"|"+word[1]] += 1
+                    else:
+                        if word.isalpha():
+                            if word not in wordCount[label]:
+                                wordCount[label][word] = 1
+                            else:
+                                wordCount[label][word] += 1
 
         self.labelCount = labelCount
         self.wordCount = wordCount
