@@ -1,6 +1,6 @@
 from nltk.tokenize import word_tokenize
 from nltk import download as n_download
-n_download("punkt")
+n_download("punkt", quiet=True)
 
 class Cell:
     def __init__(self, rules, left, right):
@@ -15,6 +15,7 @@ class Grammer:
     def __init__(self):
         self.terminals = {}
         self.nonTerminals = {}
+        self.table = None
 
     def buildGrammer(self, cfgPath):
         cfg = open(cfgPath, "r")
@@ -41,14 +42,10 @@ class Grammer:
         if cell1.rules != [] and cell2.rules != []:
             for rule1 in cell1.rules:
                 for rule2 in cell2.rules:
-                    print("COMPARIBNG")
-                    print(rule1)
-                    print(rule2)
                     nonTerminal = rule1 + " " + rule2
                     if nonTerminal in self.nonTerminals:
                         rules.extend(self.nonTerminals[nonTerminal])
-        print("FOUND RULES:", end=" ")
-        print (rules)
+
         return rules
 
     def printTable(self, table):
@@ -60,41 +57,58 @@ class Grammer:
     def parse(self, sentence):
         tokenization = word_tokenize(sentence)
         wc = len(tokenization)
-        table = [[Cell([], None, None) for i in range(wc)] for j in range(wc)]
+
+        if wc == 0:
+            return False
+
+        self.table = [[Cell([], None, None) for i in range(wc)] for j in range(wc)]
 
         # populate diagonals
         for i, word in enumerate(tokenization):
-            rules = self.terminals[word]
-            table[i][i] = (Cell(rules, None, None))
+            if word in self.terminals:
+                rules = self.terminals[word]
+            else:
+                rules = []
 
-        self.printTable(table)
+            self.table[i][i] = (Cell(rules, None, None))
 
         for diag in range(1, wc):
-            print("NEW DIAG")
             for x in range(0, wc - diag): # x is row, y is column
                 y = x + diag
-
-                print("NEW CELL AT " +  str(x) + ", " + str(y))
                 rules = []
-                for k in range(x, x + diag):
-                    print("NEW COMPARE: ", table[x][k], " AND ", table[k + 1][y])
 
-                    # print(x, y, k)
-                    print("comparing (" + str(x) + ", " + str(k) + ") and (" + str(k + 1) + ", " + str(y) + ")") 
-                    cell1 = table[x][k]
-                    cell2 = table[k + 1][y]
-                    print(cell1, cell2)
+                for k in range(x, x + diag):
+                    cell1 = self.table[x][k]
+                    cell2 = self.table[k + 1][y]
                     rules.extend(self.compareCells(cell1, cell2))
                 
-                table[x][y] = Cell(rules, cell1, cell2)
-        self.printTable(table)
+                self.table[x][y] = Cell(rules, cell1, cell2)
+        
+        if self.table[0][wc - 1].rules != []:
+            return True
+        else:
+            return False
 
-    
-    
-    
+    def printParses(self, printTree=False):
+        if self.table == None:
+            print("ERROR: Table not built yet. Please parse a sentence first in order to print it.")
+            return
 
 cfgPath = input("Enter the name of the CFG file: ")
 
 g = Grammer()
+print("Loading grammer...")
 g.buildGrammer(cfgPath)
-g.parse("i book the flight through houston")
+print("Do you want textual parse trees to be displayed (y/n)?")
+parseTree = True if input() == "y" else False
+
+while(1):
+    print("Enter a sentence to parse: ")
+    sentence = input()
+
+    if sentence == "quit":
+        break
+
+    valid = g.parse(sentence)
+    print("VALID" if valid else "INVALID", "SENTENCE")
+    g.printParses()
