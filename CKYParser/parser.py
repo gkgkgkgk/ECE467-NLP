@@ -90,19 +90,30 @@ class Grammar:
             return False
 
     # recursion is right- double check that the left and right rules are correct...
-    def parsePath(self, rule):
+    def parsePath(self, rule, printTree=False, indent=1):
         if str(rule).islower():
             return rule
 
         left = self.parsePath(rule.left)
         right = self.parsePath(rule.right)
+        path = ''
+        treePath = ''
 
-        if left == right:
-            return '[' + rule.rule + ' ' + left + ']'
-        else:
-            return '[' + rule.rule + ' ' + self.parsePath(rule.left) + ' ' + self.parsePath(rule.right) + ']'
         
-    def printParses(self, printTree, i = 1):
+        if left == right:
+            path = '[' + rule.rule + ' ' + left + ']'
+        else:
+            path = '[' + rule.rule + ' ' + self.parsePath(rule.left)[0] + ' ' + self.parsePath(rule.right)[0] + ']'
+        
+        if printTree:
+            if left == right:
+                treePath = '[' + rule.rule + ' ' + left + ']'
+            else:
+                treePath = '[' + rule.rule + "\n" + ('  ' * indent) + self.parsePath(rule.left, True, indent + 1)[1] + "\n" + ('  ' * indent) + self.parsePath(rule.right, True, indent + 1)[1] + "\n" + ('  ' * (indent - 1)) + ']'
+
+        return [path, treePath]
+
+    def printParses(self, sentence, printTree, i = 1):
         tokenization = word_tokenize(sentence)
 
         if self.table == None:
@@ -112,9 +123,13 @@ class Grammar:
         for i, rule in enumerate(self.table[0][len(self.table) - 1]):
             if self.table[0][len(self.table) - 1][i].rule == "S":
                 print("Valid parse #" + str(i + 1) + ":")
-                print(self.parsePath(self.table[0][len(self.table) - 1][i]))
+                parse = self.parsePath(self.table[0][len(self.table) - 1][i], printTree)
+                print(parse[0], "\n")
 
-        
+                if printTree:
+                    print(parse[1], "\n")
+
+        print("Number of valid parses: ", len(self.table[0][len(self.table) - 1]))
 
 cfgPath = input("Enter the name of the CFG file: ")
 
