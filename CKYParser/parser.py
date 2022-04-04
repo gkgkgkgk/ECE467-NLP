@@ -99,9 +99,8 @@ class Grammar:
         path = ''
         treePath = ''
 
-        
         if left == right:
-            path = '[' + rule.rule + ' ' + left + ']'
+            path = '[' + rule.rule + ' ' + left[0] + ']'
         else:
             path = '[' + rule.rule + ' ' + self.parsePath(rule.left)[0] + ' ' + self.parsePath(rule.right)[0] + ']'
         
