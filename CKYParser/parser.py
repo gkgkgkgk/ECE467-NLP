@@ -57,7 +57,7 @@ class Grammar:
             print()
 
     def parse(self, sentence):
-        tokenization = word_tokenize(sentence)
+        tokenization = word_tokenize(sentence.lower())
         wc = len(tokenization)
 
         if wc == 0:
@@ -85,13 +85,15 @@ class Grammar:
                 self.table[x][y].extend(rules)
         
         if self.table[0][wc - 1] != []:
-            return True
-        else:
-            return False
+            for rule in self.table[0][wc - 1]:
+                if rule.rule == "S":
+                    return True
+
+        return False
 
     # recursion is right- double check that the left and right rules are correct...
     def parsePath(self, rule, printTree=False, indent=1):
-        if str(rule).islower():
+        if str(rule).islower() or str(rule).isdigit():
             return rule
 
         left = self.parsePath(rule.left)
@@ -100,7 +102,7 @@ class Grammar:
         treePath = ''
 
         if left == right:
-            path = '[' + rule.rule + ' ' + left[0] + ']'
+            path = '[' + rule.rule + ' ' + left + ']'
         else:
             path = '[' + rule.rule + ' ' + self.parsePath(rule.left)[0] + ' ' + self.parsePath(rule.right)[0] + ']'
         
@@ -113,22 +115,24 @@ class Grammar:
         return [path, treePath]
 
     def printParses(self, sentence, printTree, i = 1):
-        tokenization = word_tokenize(sentence)
+        tokenization = word_tokenize(sentence.lower())
 
         if self.table == None:
             print("ERROR: Table not built yet. Please parse a sentence first in order to print it.")
             return
 
+        parseNum = 0
         for i, rule in enumerate(self.table[0][len(self.table) - 1]):
             if self.table[0][len(self.table) - 1][i].rule == "S":
-                print("Valid parse #" + str(i + 1) + ":")
+                parseNum += 1
+                print("Valid parse #" + str(parseNum) + ":")
                 parse = self.parsePath(self.table[0][len(self.table) - 1][i], printTree)
                 print(parse[0], "\n")
 
                 if printTree:
                     print(parse[1], "\n")
 
-        print("Number of valid parses: ", len(self.table[0][len(self.table) - 1]))
+        print("Number of valid parses: ", parseNum)
 
 cfgPath = input("Enter the name of the CFG file: ")
 
@@ -147,4 +151,6 @@ while(1):
 
     valid = g.parse(sentence)
     print("VALID" if valid else "INVALID", "SENTENCE")
-    g.printParses(sentence, parseTree)
+    
+    if valid:
+        g.printParses(sentence, parseTree)
