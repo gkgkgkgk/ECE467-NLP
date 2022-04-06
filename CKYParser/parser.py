@@ -9,7 +9,9 @@ class Rule:
         self.right = right
 
     def __str__(self):
-        return str(self.rule)
+        if self.left == self.right:
+                    return str(self.rule) + " " + str(self.left) + " " + str(self.right)
+        return str(self.rule) + " " + str(self.left.rule) + " " + str(self.right.rule)
 
 class Grammar:
     def __init__(self):
@@ -89,28 +91,26 @@ class Grammar:
                 if rule.rule == "S":
                     return True
 
+
         return False
 
     # recursion is right- double check that the left and right rules are correct...
     def parsePath(self, rule, printTree=False, indent=1):
         if str(rule).islower() or str(rule).isdigit():
-            return rule
+            return [rule, rule, True]
 
-        left = self.parsePath(rule.left)
-        right = self.parsePath(rule.right)
         path = ''
         treePath = ''
 
-        if left == right:
-            path = '[' + rule.rule + ' ' + left + ']'
+        left = self.parsePath(rule.left)
+        right = self.parsePath(rule.right)
+
+        if len(left) == 3 and len(right) == 3:
+            path ='[' + rule.rule + ' ' + left[0] + ']'
+            treePath = '[' + rule.rule + ' ' + left[0]+ ']'
         else:
             path = '[' + rule.rule + ' ' + self.parsePath(rule.left)[0] + ' ' + self.parsePath(rule.right)[0] + ']'
-        
-        if printTree:
-            if left == right:
-                treePath = '[' + rule.rule + ' ' + left + ']'
-            else:
-                treePath = '[' + rule.rule + "\n" + ('  ' * indent) + self.parsePath(rule.left, True, indent + 1)[1] + "\n" + ('  ' * indent) + self.parsePath(rule.right, True, indent + 1)[1] + "\n" + ('  ' * (indent - 1)) + ']'
+            treePath = '[' + rule.rule + "\n" + ('  ' * indent) + self.parsePath(rule.left, True, indent + 1)[1] + "\n" + ('  ' * indent) + self.parsePath(rule.right, True, indent + 1)[1] + "\n" + ('  ' * (indent - 1)) + ']'
 
         return [path, treePath]
 
