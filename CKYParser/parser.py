@@ -94,35 +94,32 @@ class Grammar:
 
         return False
 
-    # recursion is right- double check that the left and right rules are correct...
-    def parsePath(self, rule, printTree=False, indent=1):
+    def parsePath(self, rule, indent=1):
         if str(rule).islower() or str(rule).isdigit():
             return [rule, rule, True]
 
         path = ''
         treePath = ''
 
-        left = self.parsePath(rule.left)
-        right = self.parsePath(rule.right)
+        left = self.parsePath(rule.left, indent + 1)
+        right = self.parsePath(rule.right, indent + 1)
 
         if len(left) == 3 and len(right) == 3:
             path ='[' + rule.rule + ' ' + left[0] + ']'
             treePath = '[' + rule.rule + ' ' + left[0]+ ']'
         else:
-            path = '[' + rule.rule + ' ' + self.parsePath(rule.left)[0] + ' ' + self.parsePath(rule.right)[0] + ']'
-            treePath = '[' + rule.rule + "\n" + ('  ' * indent) + self.parsePath(rule.left, True, indent + 1)[1] + "\n" + ('  ' * indent) + self.parsePath(rule.right, True, indent + 1)[1] + "\n" + ('  ' * (indent - 1)) + ']'
+            path = '[' + rule.rule + ' ' + left[0] + ' ' + right[0] + ']'
+            treePath = '[' + rule.rule + "\n" + ('  ' * indent) + left[1] + "\n" + ('  ' * indent) + right[1] + "\n" + ('  ' * (indent - 1)) + ']'
 
         return [path, treePath]
 
-    def printParses(self, sentence, printTree, i = 1):
-        tokenization = word_tokenize(sentence.lower())
-
+    def printParses(self, printTree, i = 1):
         if self.table == None:
             print("ERROR: Table not built yet. Please parse a sentence first in order to print it.")
             return
 
         parseNum = 0
-        for i, rule in enumerate(self.table[0][len(self.table) - 1]):
+        for i in range(len(self.table[0][len(self.table) - 1])):
             if self.table[0][len(self.table) - 1][i].rule == "S":
                 parseNum += 1
                 print("Valid parse #" + str(parseNum) + ":")
@@ -153,4 +150,4 @@ while(1):
     print("VALID" if valid else "INVALID", "SENTENCE")
     
     if valid:
-        g.printParses(sentence, parseTree)
+        g.printParses(parseTree)
